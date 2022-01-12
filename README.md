@@ -2,21 +2,10 @@ cordova-plugin-dbcopy
 =====================
 
 Add a prepopulated SQLite database in your Phonegap/Cordova Android and iOS app.
-### IMPORTANT NOTE
 
-1. The database file may have extensions or not for e.g the db file name would be sample.db or sample.sqlite or sample. It doesn't matter what is the file extension, just remember to use the whole filename with extensions(if having one otherwise not) as a paramter when passing to the plugin methods.
+### Note
 
-2. Location Parameters in plugin function means -
-
-```
-       location = 0; // (Disable iCloud Backup) If set will copy the database to Library/LocalDatabase. The database will not be synced by the iCloud Backup.
-       or
-       location = 1; // If set will copy the database to Library folder instead of Documents folder.
-       or
-       location = 2; // It will copy the database in the default SQLite Database directory. This is the default location for database
-```
-3. For Android, please set the target-sdk-version to minimum 26 in config.xml
-
+The database file may have extensions or not for e.g the db file name would be sample.db or sample.sqlite or sample. It doesn't matter what is the file extension, just remember to use the whole filename with extensions(if having one otherwise not) as a paramter when passing to the plugin methods.
 
 ### Database file location
 
@@ -68,18 +57,18 @@ This Method allows you the copy the database from www directory.
 
  ```javascript 
       (for ios only)
-       location = 0; // (Disable iCloud Backup) If set will copy the database to Library/LocalDatabase. The database will not be synced by the iCloud Backup.
-       or
-       location = 1; // If set will copy the database to Library folder instead of Documents folder.
-       or
-       location = 2; // It will copy the database in the default SQLite Database directory. This is the default location for database
+      location = 0; // It will copy the database in the default SQLite Database directory. This is the default location for database
+      or
+      location = 1; // If set will copy the database to Library folder instead of Documents folder.
+      or
+      location = 2; // (Disable iCloud Backup) If set will copy the database to Library/LocalDatabase. The database will not be synced by the iCloud Backup.
 ```
 
    **success** -> function will be called if the db is copied sucessfully.
 
    **error** -> function will be called if the there is some problem in copying the db or the file already exists on the location.
    
-**Check Database Available on External Storage**
+**Check Database Available on External Storage (Android Only)**
 ===============================================
 ```javascript 
     window.plugins.sqlDB.checkDbOnStorage(dbname, source, success, error);
@@ -107,11 +96,11 @@ This is an untested version. Let me know if you have any suggestions. Also Pull 
 
 ```
        (for ios only)
-       location = 0; // (Disable iCloud Backup) If set will copy the database to Library/LocalDatabase. The database will not be synced by the iCloud Backup.
+       location = 0; // It will copy the database in the default SQLite Database directory. This is the default location for database
        or
        location = 1; // If set will copy the database to Library folder instead of Documents folder.
        or
-       location = 2; // It will copy the database in the default SQLite Database directory. This is the default location for database
+       location = 2; // (Disable iCloud Backup) If set will copy the database to Library/LocalDatabase. The database will not be synced by the iCloud Backup.
 ```
  **source** -> Source File location like /sdcard/mydb/db.db. Please provide a valid existing location and the dbname should be present in the path.
  
@@ -126,7 +115,7 @@ This is an untested version. Let me know if you have any suggestions. Also Pull 
 
 This is an untested version. Let me know if you have any suggestions. Also Pull Request are always welcome.
 ```javascript 
-    window.plugins.sqlDB.copyDbToStorage(dbname, location, destination, overwrite, success, error);
+    window.plugins.sqlDB.copyDbToStorage(dbname, location, destination, success, error);
 ```
  Here - 
  
@@ -135,15 +124,13 @@ This is an untested version. Let me know if you have any suggestions. Also Pull 
  **location** -> You can pass three integer arguments here (Use 0 for Android)-
 ```javascript
    (for ios only)
-   location = 0; // (Disable iCloud Backup) If set will copy the database to Library/LocalDatabase. The database will not be synced by the iCloud Backup.
+   location = 0; // It will copy the database in the default SQLite Database directory. This is the default location for database
    or
    location = 1; // If set will copy the database to Library folder instead of Documents folder.
    or
-   location = 2; // It will copy the database in the default SQLite Database directory. This is the default location for database
+   location = 2; // If set will copy the database from Library/LocalDatabase.
 ```
    **destination** -> Destination File location like /sdcard/mydb/ Please provide a valid existing location and "/" should be present at the end of the path. Do not append db name in the path.
-   
-   **overwrite** -> if set to true, then will replace the file at the destination. Otherwise will throw an error, if destination file already exists.
    
    **success** -> function will be called if the db is copied sucessfully.
    
@@ -177,7 +164,7 @@ function dbcopy()
 {
         //Database filename to be copied is demo.db
 
-        //location = 0, will copy the db to default SQLite Database Directory, /Library/LocalDatabase (Disable iCloud Backup)
+        //location = 0, will copy the db to default SQLite Database Directory
         window.plugins.sqlDB.copy("demo.db", 0, copysuccess,copyerror);
 
         or
@@ -187,7 +174,7 @@ function dbcopy()
 
         or
 
-        //location = 2, will copy the database to /Documents folder 
+        //location = 2, will copy the database to /Library/LocalDatabase folder (Disable iCloud Backup)
         window.plugins.sqlDB.copy("demo.db", 2, copysuccess,copyerror);
 
 }

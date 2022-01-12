@@ -1,7 +1,5 @@
 package me.rahul.plugins.sqlDB;
 
-import android.util.Log;
-
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
@@ -69,8 +67,7 @@ public class sqlDB extends CordovaPlugin {
         } else if (action.equalsIgnoreCase("copyDbToStorage")) {
             String db = args.getString(0);
             String dest = args.getString(2);
-            boolean overwrite = args.getBoolean(3);
-            this.copyDbToStorage(db, dest, overwrite, callbackContext);
+            this.copyDbToStorage(db, dest, callbackContext);
             return true;
         } else if (action.equalsIgnoreCase("copyDbFromStorage")) {
             String db = args.getString(0);
@@ -90,7 +87,7 @@ public class sqlDB extends CordovaPlugin {
         }
     }
 
-    private void copyDB(final String dbName, final String src, final CallbackContext callbackContext) {
+    private void copyDB(String dbName, final String src, final CallbackContext callbackContext) {
 
         final File dbpath;
         dbname = dbName;
@@ -99,7 +96,7 @@ public class sqlDB extends CordovaPlugin {
                 .getActivity().getApplicationContext());
         dbpath = this.cordova.getActivity().getDatabasePath(dbname);
         Boolean dbexists = dbpath.exists();
-        Log.d("CordovaLog", "DatabasePath = " + dbpath + "&&&& dbname = " + dbname + "&&&&DB Exists =" + dbexists);
+        //Log.d("CordovaLog", "DatabasePath = " + dbpath + "&&&& dbname = " + dbname + "&&&&DB Exists =" + dbexists);
 
         if (dbexists) {
             sendPluginResponse(516, "DB Already Exists", true, callbackContext);
@@ -108,50 +105,19 @@ public class sqlDB extends CordovaPlugin {
 
                 @Override
                 public void run() {
-                    PluginResult plresult;
-
+                    PluginResult plResult;
                     // TODO Auto-generated method stub
-//                    try {
-//                        dbhelper.createdatabase(dbpath, src, callbackContext);
-////						plResult = new PluginResult(PluginResult.Status.OK);
-////						callbackContext.sendPluginResult(plResult);
-//                        //sendPluginResponse(200,"Db Copied", false, callbackContext);
-//                    } catch (Exception e) {
-//
-////						plResult = new PluginResult(PluginResult.Status.ERROR,
-////								e.getMessage());
-////						callbackContext.sendPluginResult(plResult);
-//                        sendPluginResponse(400, e.getMessage(), true, callbackContext);
-//                    }
-                    InputStream myInput = null;
-                    JSONObject response = new JSONObject();
                     try {
-                        myInput = cordova.getActivity().getAssets().open("www/" + dbName);
-
-                        OutputStream myOutput = new FileOutputStream(dbpath);
-                        byte[] buffer = new byte[1024];
-                        while ((myInput.read(buffer)) > -1) {
-                            myOutput.write(buffer);
-                        }
-
-                        myOutput.flush();
-                        myOutput.close();
-                        myInput.close();
-                        try {
-                            response.put("message", "Db Copied");
-                            response.put("code", 200);
-                            plresult = new PluginResult(PluginResult.Status.OK,response);
-                            callbackContext.sendPluginResult(plresult);
-                        } catch (JSONException err) {
-                            throw new Error(err.getMessage());
-                        }
+                        dbhelper.createdatabase(dbpath, src, callbackContext);
+//						plResult = new PluginResult(PluginResult.Status.OK);
+//						callbackContext.sendPluginResult(plResult);
+                        //sendPluginResponse(200,"Db Copied", false, callbackContext);
                     } catch (Exception e) {
-                        Log.d("Cordova", "Try Error = "+e.getMessage());
-                        try {
-                            dbhelper.createdatabase(dbpath, src, callbackContext);
-                        } catch (Exception err) {
-                            sendPluginResponse(400, e.getMessage(), true, callbackContext);
-                        }
+
+//						plResult = new PluginResult(PluginResult.Status.ERROR,
+//								e.getMessage());
+//						callbackContext.sendPluginResult(plResult);
+                        sendPluginResponse(400, e.getMessage(), true, callbackContext);
                     }
                 }
 
@@ -223,7 +189,7 @@ public class sqlDB extends CordovaPlugin {
 
     }
 
-    private void copyDbToStorage(String dbname, String dest, boolean overwrite, final CallbackContext callbackContext) {
+    private void copyDbToStorage(String dbname, String dest, final CallbackContext callbackContext) {
 
         File source = cordova.getActivity().getDatabasePath(dbname);
         File destFolder;
@@ -247,14 +213,8 @@ public class sqlDB extends CordovaPlugin {
             return;
         }
 
-        //Check if the db exists at source
         if (source.exists()) {
-            //check if the db file is already present at destination and overwrite flag is false
-            if(destination.exists() && !overwrite) {
-                sendPluginResponse(400, "DB already exists at destination", true, callbackContext);
-            } else {
-                this.newCopyDB(source, destination, callbackContext);
-            }
+            this.newCopyDB(source, destination, callbackContext);
         } else {
             sendPluginResponse(404, "Invalid DB Location or DB Doesn't Exists", true, callbackContext);
         }
